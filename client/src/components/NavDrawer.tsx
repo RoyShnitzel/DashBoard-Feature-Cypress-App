@@ -20,6 +20,7 @@ import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
 import { Grid, Avatar, Typography } from "@material-ui/core";
 import { formatAmount } from "../utils/transactionUtils";
 import { AuthMachineContext, AuthMachineEvents } from "../machines/authMachine";
+import AssessmentIcon from '@material-ui/icons/Assessment';
 
 const drawerWidth = 240;
 
@@ -79,6 +80,18 @@ export const mainListItems = (
         <NotificationsIcon />
       </ListItemIcon>
       <ListItemText primary="Notifications" />
+    </ListItem>
+    <ListItem
+      button
+      // @ts-ignore
+      onClick={() => showTemporaryDrawer && toggleDrawer()}
+      component={RouterLink}
+      to="/admin"
+    >
+      <ListItemIcon>
+        <AssessmentIcon />
+      </ListItemIcon>
+      <ListItemText primary="DashBoard" />
     </ListItem>
   </div>
 );

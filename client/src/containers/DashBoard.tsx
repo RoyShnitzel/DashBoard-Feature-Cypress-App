@@ -9,6 +9,7 @@ export interface Props {
 const DashBoard: React.FC = () => {
   return (
     <>
+    <div>hello world</div>
     </>
   );
 };
