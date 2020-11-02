@@ -2,12 +2,14 @@
 
 import express from "express";
 import { Request, Response } from "express";
+import {OneHour, OneDay, OneWeek} from './timeFrames'
 
 // some useful database functions in here:
 import {
 } from "./database";
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { ensureAuthenticated, validateMiddleware } from "./helpers";
+import { createNewEvent,getAllEvents} from "./database"
 
 import {
   shortIdValidation,
@@ -15,6 +17,7 @@ import {
   userFieldsValidator,
   isUserValidator,
 } from "./validators";
+import console from "console";
 const router = express.Router();
 
 // Routes
@@ -28,20 +31,48 @@ interface Filter {
 }
 
 router.get('/all', (req: Request, res: Response) => {
-  res.send('/all')
+  const events: Event[] = getAllEvents()
+  res.status(200).send(events)
     
 });
 
 router.get('/all-filtered', (req: Request, res: Response) => {
-  res.send('/all-filtered')
+  interface Filter {
+    sorting: string; // '+date'/'-date'
+    type: string; 
+    browser: string;
+    search: string;
+    offset: number;
+  }
+  const filters: Filter = req.query;
+  const events: Event[] = getAllEvents()
+  let filteredEvents = filters.type ? events.filter(x=> x.name === filters.type) : events
+  filteredEvents = filters.browser ? filteredEvents.filter(x=> x.browser === filters.browser) : filteredEvents
+  filteredEvents = filters.search ? filteredEvents.filter(x=> Object.values(x).some(y=>y.toString().includes(filters.search))) : filteredEvents
+  filteredEvents = filters.sorting ? filteredEvents.sort((x,y)=>{
+    if(filters.sorting === '-date'){
+      return y.date - x.date
+    }else {
+      return x.date - y.date
+    }}) : filteredEvents
+  const endArr = filters.offset ? filters.offset < filteredEvents.length ?
+   {events: [...filteredEvents.slice(0,filters.offset)],more: true}
+  :{events: [...filteredEvents.slice(0,filters.offset)],more: false}
+  :{events: [...filteredEvents],more: false}
+  res.send(endArr)
 });
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {
-  res.send('/by-days/:offset')
+  const {offset} = req.params
+  const events: Event[] = getAllEvents()
+  res.status(200).send('')
 });
 
 router.get('/by-hours/:offset', (req: Request, res: Response) => {
-  res.send('/by-hours/:offset')
+  const {offset} = req.params
+  const events: Event[] = getAllEvents()
+
+  res.send('')
 });
 
 router.get('/today', (req: Request, res: Response) => {
@@ -61,7 +92,10 @@ router.get('/:eventId',(req : Request, res : Response) => {
 });
 
 router.post('/', (req: Request, res: Response) => {
-  res.send('/')
+  const newEvent: Event = req.body
+  console.log(newEvent)
+  const event = createNewEvent(newEvent)
+  res.send(event)
 });
 
 router.get('/chart/os/:time',(req: Request, res: Response) => {

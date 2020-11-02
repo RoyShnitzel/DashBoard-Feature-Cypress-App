@@ -71,6 +71,7 @@ import {
 import { DbSchema } from "../../client/src/models/db-schema";
 
 
+
 export type TDatabase = {
   users: User[];
   contacts: Contact[];
@@ -107,6 +108,14 @@ export const seedDatabase = () => {
   db.setState(testSeed).write();
   return;
 };
+
+export const createNewEvent = (event: Event) => {
+  db.get(EVENT_TABLE).push(event).write();
+  return event
+};
+
+export const getAllEvents = () => db.get(EVENT_TABLE).value();
+
 
 export const getAllUsers = () => db.get(USER_TABLE).value();
 
