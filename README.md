@@ -37,10 +37,6 @@ you can use `npm run init` __in the project root__ to download both the client a
  - Showing events on Google Map (cluster events).  
 you can use whichever library you choose, but [this one](https://www.npmjs.com/package/@react-google-maps/api) is recommended) 
 ![](https://i.imgur.com/AOACrVj.png)
- - Showing time per url per user
-![](https://i.imgur.com/FSQEHo7.png)
- - Showing time spent on each page by all users.
-![](https://i.imgur.com/RFx8GFw.png)
  - Showing graph with unique sessions by day with option to change date
 ![](https://i.imgur.com/EPPmDjq.png)
  - Showing graph with unique sessions by hour with option to change date
@@ -97,6 +93,10 @@ note- the repo uses 'husky' and you might find you can't push to github while th
 - Passing backend tests will pass the challenge, but other requirements will be inspected.
 
 ## Bonuses
+  - Showing time per url per user  
+  ![](https://i.imgur.com/FSQEHo7.png)
+  - Showing time spent on each page by all users.  
+  ![](https://i.imgur.com/RFx8GFw.png)
   - Make your own custom tiles.
   - Make the tiles resizable.
   - Creating piece of code that send events from clients to the server and save it.
