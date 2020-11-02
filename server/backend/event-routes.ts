@@ -3,7 +3,7 @@
 import express from "express";
 import { Request, Response } from "express";
 import {OneHour, OneDay, OneWeek} from './timeFrames'
-
+import moment from "moment";
 // some useful database functions in here:
 import {
 } from "./database";
@@ -37,13 +37,6 @@ router.get('/all', (req: Request, res: Response) => {
 });
 
 router.get('/all-filtered', (req: Request, res: Response) => {
-  interface Filter {
-    sorting: string; // '+date'/'-date'
-    type: string; 
-    browser: string;
-    search: string;
-    offset: number;
-  }
   const filters: Filter = req.query;
   const events: Event[] = getAllEvents()
   let filteredEvents = filters.type ? events.filter(x=> x.name === filters.type) : events
@@ -65,14 +58,85 @@ router.get('/all-filtered', (req: Request, res: Response) => {
 router.get('/by-days/:offset', (req: Request, res: Response) => {
   const {offset} = req.params
   const events: Event[] = getAllEvents()
-  res.status(200).send('')
+  const today = new Date (new Date().toDateString()).getTime()+6*OneHour-(+offset)*OneDay;
+  const wantedWeek = today-6*OneDay
+  let year: number = 0
+  let filteredEvents = events.filter(x=>{
+    return moment(new Date(x.date)).isBefore(new Date(today))&&moment(new Date(x.date)).isAfter(new Date(wantedWeek))
+  }).sort((a,b)=> +moment(a.date).format('YYYYMMDD') - +moment(b.date).format('YYYYMMDD'))
+  let newFilteredEvents = filteredEvents.map((x)=>{
+    const day = moment(new Date(x.date)).date()
+    const month = moment(new Date(x.date)).month()
+    year = moment(new Date(x.date)).year()
+    return [x, day, month, year]
+  })
+  let newDays: any[] =[];
+  let newMonths: any[] =[];
+  newFilteredEvents.forEach(x=>{
+    if(newDays.includes(x[1])){
+      return
+    }else {
+      newDays.push(x[1])
+      newMonths.push(x[2])
+    }
+  })
+  const endFilter = newDays.map((x,i)=>{
+    const day = x>9? x:`0${x}`
+    const month = newMonths[i]+1>9? newMonths[i]+1:`0${newMonths[i]+1}`
+    const newObj ={date: `${day}/${month}/${year}`, count:0}
+    newFilteredEvents.map(y=>{
+      if(y[1] === x) {
+        newObj.count++
+      }
+    })
+    return newObj
+  })
+  console.log(endFilter)
+  res.send(endFilter)
 });
 
 router.get('/by-hours/:offset', (req: Request, res: Response) => {
   const {offset} = req.params
-  const events: Event[] = getAllEvents()
-
-  res.send('')
+  const events: Event[] = getAllEvents();
+  const today = new Date (new Date().toDateString()).getTime()+6*OneHour;
+  const wantedDay = today - (+offset * OneDay)
+  let filteredEvents = events.filter(x=>{
+    return moment(new Date(x.date)).isSame(new Date(wantedDay),'day')
+  })
+  let newFilteredEvents = filteredEvents.map((x)=>{
+    const hour = moment(new Date(x.date)).hour()
+    return [x, hour]
+  })
+  let newFormat: any[] =[];
+  newFilteredEvents.forEach(x=>{
+    if(newFormat.includes(x[1])){
+      return
+    }else {
+      newFormat.push(x[1])
+    }
+  })
+  newFormat.sort((x,y)=> x-y)
+  const hourArr: any[] = []
+  for (let i = 0; i < 24; i++) {
+    hourArr.push({hour:`${i>9? i:`0${i}`}:00`, count:0})
+  }
+  const endFilter = newFormat.map(x=>{
+    const newObj ={hour: `${x>9? x:`0${x}`}:00`, count:0}
+    newFilteredEvents.forEach(y=>{
+      if(y[1] === x) {
+        newObj.count++
+      }
+    })
+    return newObj
+  })
+  endFilter.forEach(z=>{
+    hourArr.forEach(w=>{
+      if(w.hour === z.hour){
+        w.count = z.count
+      }
+    })
+  })
+  res.send(hourArr)
 });
 
 router.get('/today', (req: Request, res: Response) => {
@@ -93,7 +157,6 @@ router.get('/:eventId',(req : Request, res : Response) => {
 
 router.post('/', (req: Request, res: Response) => {
   const newEvent: Event = req.body
-  console.log(newEvent)
   const event = createNewEvent(newEvent)
   res.send(event)
 });
