@@ -57,9 +57,14 @@ router.get('/all-filtered', (req: Request, res: Response) => {
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {
   const {offset} = req.params
+  console.log(offset)
   const events: Event[] = getAllEvents()
-  const today = new Date (new Date().toDateString()).getTime()+6*OneHour-(+offset)*OneDay;
-  const wantedWeek = today-6*OneDay
+  const today = new Date (new Date().toDateString()).valueOf()-(+offset-1)*OneDay;
+  const day: number = new Date(today).getDate();
+  const month: number = new Date(today).getMonth() + 1;
+  const newYear: number = new Date(today).getFullYear();
+  const formattedDate = new Date(`${newYear}/${month}/${day}`).valueOf();
+  const wantedWeek = formattedDate-7*OneDay
   let year: number = 0
   let filteredEvents = events.filter(x=>{
     return moment(new Date(x.date)).isBefore(new Date(today))&&moment(new Date(x.date)).isAfter(new Date(wantedWeek))
