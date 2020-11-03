@@ -3,9 +3,11 @@ import { GoogleMap , LoadScript,Marker,MarkerClusterer  } from '@react-google-ma
 import{ httpClient } from '../../utils/asyncUtils'
 import { Event } from '../../models'
 
+
 const containerStyle = {
     width: '40%',
-    height: '200px'
+    height: '300px',
+    border: '1px solid black'
   };
    
   const center = {
@@ -25,7 +27,7 @@ const containerStyle = {
   
     return (
       <LoadScript
-        googleMapsApiKey={'AIzaSyBOOqt0AlPNqAxNg88Xy3v9_fYvKg-ejiQ'}
+        googleMapsApiKey={process.env.REACT_APP_MAPS_KEY!}
       >
         <GoogleMap
           mapContainerStyle={containerStyle}

@@ -215,8 +215,21 @@ router.get('/chart/os/:time',(req: Request, res: Response) => {
 })
 
   
-router.get('/chart/pageview/:time',(req: Request, res: Response) => {
-  res.send('/chart/pageview/:time')
+router.get('/chart/pageview',(req: Request, res: Response) => {
+  const events: Event[] = getAllEvents()
+  const pages: string[] = events.map(x=>x.url).filter((id, i, arr)=> {
+    return arr.indexOf(id) == i;
+})
+const pageViews = pages.map(page=>{
+  let views = 0
+  events.forEach(event=>{
+    if(event.url === page){
+      views++
+    }
+  })
+  return{name: page.replace('http://localhost3000/',''),views:views}
+})
+  res.send(pageViews)
 })
 
 router.get('/chart/timeonurl/:time',(req: Request, res: Response) => {

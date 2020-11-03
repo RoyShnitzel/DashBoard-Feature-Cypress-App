@@ -12,7 +12,8 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     alignItems: "center",
     flexDirection: 'column',
-    width: '60%'
+    width: '60%',
+    border: '1px solid black'
   },
   textField: {
     marginLeft: theme.spacing(1),
