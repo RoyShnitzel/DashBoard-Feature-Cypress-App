@@ -9,9 +9,9 @@ import TextField from '@material-ui/core/TextField';
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
-    flexDirection: 'column',
     flexWrap: 'wrap',
     alignItems: "center",
+    flexDirection: 'column',
     width: '60%'
   },
   textField: {
@@ -21,13 +21,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
    
-  const SessionDays: React.FC<any>= () => {
+  const SessionHours: React.FC<any>= () => {
    const [data,setData] = useState<any[]>([])
 
    const classes = useStyles();
 
    const fetchData =  async (offset:number)=> {
-    const { data } = await httpClient.get(`http://localhost:3001/events/by-days/${offset}`)
+    const { data } = await httpClient.get(`http://localhost:3001/events/by-hours/${offset}`)
     setData(data)
    }
 
@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
        <LineChart data={data} 
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
+            <XAxis dataKey="hour" />
             <YAxis />
             <Tooltip />
             <Line type="monotone" dataKey="count" stroke="#82ca9d" />
@@ -72,4 +72,4 @@ const useStyles = makeStyles((theme) => ({
     )
   }
 
-export default SessionDays
+export default SessionHours

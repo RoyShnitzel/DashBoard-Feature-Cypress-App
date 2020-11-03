@@ -4,7 +4,7 @@ import{ httpClient } from '../../utils/asyncUtils'
 import { Event } from '../../models'
 
 const containerStyle = {
-    width: '200px',
+    width: '40%',
     height: '200px'
   };
    

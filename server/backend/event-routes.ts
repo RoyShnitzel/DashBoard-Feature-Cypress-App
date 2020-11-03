@@ -10,6 +10,7 @@ import {
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { ensureAuthenticated, validateMiddleware } from "./helpers";
 import { createNewEvent,getAllEvents} from "./database"
+import axios from "axios";
 
 import {
   shortIdValidation,
@@ -17,7 +18,7 @@ import {
   userFieldsValidator,
   isUserValidator,
 } from "./validators";
-import console from "console";
+
 const router = express.Router();
 
 // Routes
@@ -96,7 +97,6 @@ router.get('/by-days/:offset', (req: Request, res: Response) => {
     })
     return newObj
   })
-  console.log(endFilter)
   res.send(endFilter)
 });
 
@@ -152,10 +152,54 @@ router.get('/week', (req: Request, res: Response) => {
   res.send('/week')
 });
 
-router.get('/retention', (req: Request, res: Response) => {
+router.get('/retention', async (req: Request, res: Response) => {
   const {dayZero} = req.query
-  res.send('/retention')
+  const formatDayZero = new Date (new Date(+dayZero).toDateString()).getTime()
+  const today = new Date (new Date().toDateString()).getTime()
+  const weekNum = (today-dayZero)/OneWeek
+  const events: Event[] = getAllEvents()
+  const endArr: object[] = []
+  for(let i = 0;i< weekNum+1;i++) {
+    let y=(i+1)
+    const filterByDate = events.filter(x=>{
+      return moment(new Date(x.date)).isBefore(new Date(+formatDayZero+(y*OneWeek)))&&moment(new Date(x.date)).isAfter(new Date(+formatDayZero+(i*OneWeek)))
+    })
+    const signUpByTime = filterByDate.filter(x=> x.name === 'signup')
+    const endDate = moment(new Date(+formatDayZero+(y*OneWeek))).toObject()
+    const startDay = moment(new Date(+formatDayZero+(i*OneWeek))).toObject()
+    const weeklyRetention: number[] = []
+    const users: string[] = signUpByTime.map(x=>x.distinct_user_id).filter((id, i, arr)=> {
+      return arr.indexOf(id) == i;
+  })
+    const startEvents = users.length
+    for (let z = 0+i; z < weekNum+1; z++) {
+      let w=(z+1)
+      const newFilterByDate = events.filter(x=>{
+        return moment(new Date(x.date)).isBefore(new Date(+formatDayZero+(w*OneWeek)))&&moment(new Date(x.date)).isAfter(new Date(+formatDayZero+(z*OneWeek)))
+      })
+      const loginByTime = newFilterByDate.filter(x=> x.name === 'login')
+      const newUsers: string[] = loginByTime.filter(x=>users.includes(x.distinct_user_id)).map(x=>x.distinct_user_id).filter((id, i, arr)=> {
+        return arr.indexOf(id) == i;
+    })
+      const percentage: number = Math.round((newUsers.length/startEvents)*100)
+      if(z === 0+i){
+        weeklyRetention.push(100)
+      } else{
+      weeklyRetention.push(percentage)
+      }
+    }
+    endArr.push(
+      {
+        registrationWeek: i,
+        newUsers:signUpByTime.length,
+        weeklyRetention:weeklyRetention,
+        start:`${startDay.date>9?startDay.date:`0${startDay.date}`}/${startDay.months>9?startDay.months:`0${startDay.months}`}/${startDay.years}`,
+        end:`${endDate.date>9?endDate.date:`0${endDate.date}`}/${endDate.months>9?endDate.months:`0${endDate.months}`}/${endDate.years}`
+      })
+  }
+  res.send(endArr)
 });
+
 router.get('/:eventId',(req : Request, res : Response) => {
   res.send('/:eventId')
 });
