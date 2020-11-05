@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: "flex",
         overflow: "auto",
         flexDirection: "column",
-        border: '1px solid black'
     },
 }));
 const MyGoogleMap: React.FC = () => {

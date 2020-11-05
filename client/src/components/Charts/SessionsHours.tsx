@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         flexDirection: 'column',
         textAlign: 'center',
         alignItems: "center",
-        border: '1px solid black'
     },
     pickers: {
         display: 'flex',

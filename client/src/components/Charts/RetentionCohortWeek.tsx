@@ -47,10 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         flexDirection: 'column',
         textAlign: 'center',
         alignItems: "center",
-        border: '1px solid black',
-        overflow: 'auto',
-        height: '400px',
-        width: '600px',
+        width: '100%',
     },
     textField: {
         marginLeft: theme.spacing(1),

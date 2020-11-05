@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 import ErrorBoundary from '../components/Charts/ErrorBoundary';
 import Loading from '../components/Charts/Loading';
 import { makeStyles } from "@material-ui/core/styles";
+import Card from '@material-ui/core/Card';
 
 const MyGoogleMap = lazy(() => import("../components/Charts/MyGoogleMap"));
 const SessionsDays = lazy(() => import("../components/Charts/SessionsDays"));
@@ -15,9 +16,10 @@ const useStyles = makeStyles(() => ({
   MyDashBoard: {
     display: "flex",
     flexWrap: 'wrap',
-    padding: '0',
+    padding: '10px',
     width: '100%',
-    border: '1px solid black'
+    border: '2px solid black',
+    borderRadius: '10px'
   },
 }));
 
@@ -26,31 +28,48 @@ const DashBoard: React.FC = () => {
   const classes = useStyles();
 
   return (
+    <>
+      <h1>My DashBoard</h1>
     <div className={classes.MyDashBoard} >
       <Suspense fallback={<Loading />}>
         <ErrorBoundary>
-          <MyGoogleMap />
+          <Card>
+            <RetentionCohortWeek />
+          </Card>
         </ErrorBoundary>
         <ErrorBoundary>
-          <SessionsDays />
+          <Card>
+            <MyGoogleMap />
+          </Card>
         </ErrorBoundary>
         <ErrorBoundary>
-          <SessionsHours />
+          <Card>
+            <SessionsDays />
+          </Card>
         </ErrorBoundary>
         <ErrorBoundary>
-          <ViewsPerPage />
+          <Card>
+            <SessionsHours />
+          </Card>
         </ErrorBoundary>
         <ErrorBoundary>
-          <UsersByOs />
+          <Card>
+            <ViewsPerPage />
+          </Card>
         </ErrorBoundary>
         <ErrorBoundary>
-          <RetentionCohortWeek />
+          <Card>
+            <UsersByOs />
+          </Card>
         </ErrorBoundary>
         <ErrorBoundary>
-          <LogOfAllEvents />
+          <Card>
+            <LogOfAllEvents />
+          </Card>
         </ErrorBoundary>
       </Suspense>
     </div>
+    </>
   );
 };
 

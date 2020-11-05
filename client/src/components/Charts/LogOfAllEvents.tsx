@@ -127,7 +127,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         textAlign: 'center',
         alignItems: "center",
         overflow: 'auto',
-        border: '1px solid black'
+        width:'100%'
     },
     textField: {
         marginLeft: theme.spacing(1),
