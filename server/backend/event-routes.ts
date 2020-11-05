@@ -7,7 +7,7 @@ import moment from "moment";
 // some useful database functions in here:
 import {
 } from "./database";
-import { Event, weeklyRetentionObject } from "../../client/src/models/event";
+import { Event, weeklyRetentionObject,SessionsHoursInter } from "../../client/src/models/event";
 import { ensureAuthenticated, validateMiddleware } from "./helpers";
 import { createNewEvent,getAllEvents} from "./database"
 import axios from "axios";
@@ -49,16 +49,15 @@ router.get('/all-filtered', (req: Request, res: Response) => {
     }else {
       return x.date - y.date
     }}) : filteredEvents
-  const endArr = filters.offset ? filters.offset < filteredEvents.length ?
+  const finalFilteredEvents = filters.offset ? filters.offset < filteredEvents.length ?
    {events: [...filteredEvents.slice(0,filters.offset)],more: true}
   :{events: [...filteredEvents.slice(0,filters.offset)],more: false}
   :{events: [...filteredEvents],more: false}
-  res.send(endArr)
+  res.send(finalFilteredEvents)
 });
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {
   const {offset} = req.params
-  console.log(offset)
   const events: Event[] = getAllEvents()
   const today = new Date (new Date().toDateString()).valueOf()-(+offset-1)*OneDay;
   const day: number = new Date(today).getDate();
@@ -76,17 +75,17 @@ router.get('/by-days/:offset', (req: Request, res: Response) => {
     year = moment(new Date(x.date)).year()
     return [x, day, month, year]
   })
-  let newDays: any[] =[];
-  let newMonths: any[] =[];
+  let newDays: number[] =[];
+  let newMonths: number[] =[];
   newFilteredEvents.forEach(x=>{
-    if(newDays.includes(x[1])){
+    if(newDays.includes(+x[1])){
       return
     }else {
-      newDays.push(x[1])
-      newMonths.push(x[2])
+      newDays.push(+x[1])
+      newMonths.push(+x[2])
     }
   })
-  const endFilter = newDays.map((x,i)=>{
+  const finalFilteredEvents = newDays.map((x,i)=>{
     const day = x>9? x:`0${x}`
     const month = newMonths[i]+1>9? newMonths[i]+1:`0${newMonths[i]+1}`
     const newObj ={date: `${day}/${month}/${year}`, count:0}
@@ -97,7 +96,7 @@ router.get('/by-days/:offset', (req: Request, res: Response) => {
     })
     return newObj
   })
-  res.send(endFilter)
+  res.send(finalFilteredEvents)
 });
 
 router.get('/by-hours/:offset', (req: Request, res: Response) => {
@@ -112,16 +111,16 @@ router.get('/by-hours/:offset', (req: Request, res: Response) => {
     const hour = moment(new Date(x.date)).hour()
     return [x, hour]
   })
-  let newFormat: any[] =[];
+  let newFormat: number[] =[];
   newFilteredEvents.forEach(x=>{
-    if(newFormat.includes(x[1])){
+    if(newFormat.includes(+x[1])){
       return
     }else {
-      newFormat.push(x[1])
+      newFormat.push(+x[1])
     }
   })
   newFormat.sort((x,y)=> x-y)
-  const hourArr: any[] = []
+  const hourArr: SessionsHoursInter[] = []
   for (let i = 0; i < 24; i++) {
     hourArr.push({hour:`${i>9? i:`0${i}`}:00`, count:0})
   }
@@ -158,7 +157,7 @@ router.get('/retention', async (req: Request, res: Response) => {
   const today = new Date (new Date().toDateString()).getTime()
   const weekNum = (today-dayZero)/OneWeek
   const events: Event[] = getAllEvents()
-  const endArr: object[] = []
+  const endArr: weeklyRetentionObject[] = []
   for(let i = 0;i< weekNum+1;i++) {
     let y=(i+1)
     const filterByDate = events.filter(x=>{
