@@ -210,8 +210,21 @@ router.post('/', (req: Request, res: Response) => {
   res.send(event)
 });
 
-router.get('/chart/os/:time',(req: Request, res: Response) => {
-  res.send('/chart/os/:time')
+router.get('/chart/os', (req: Request, res: Response) => {
+  const events: Event[] = getAllEvents()
+  const os: string[] = events.map(x => x.os).filter((id, i, arr) => {
+    return arr.indexOf(id) == i;
+  })
+  const pageViews = os.map(os => {
+    let usage = 0
+    events.forEach(event => {
+      if (event.os === os) {
+        usage++
+      }
+    })
+    return { name: os, value: usage }
+  })
+  res.send(pageViews)
 })
 
   

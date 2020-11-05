@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+.env
 
 # testing
 /coverage
@@ -22,4 +23,3 @@ yarn-error.log*
 cypress/videos
 cypress/screenshots
 .nyc_output
-.env

@@ -1,23 +1,55 @@
-import React from "react";
-import { Interpreter } from "xstate";
-import { AuthMachineContext, AuthMachineEvents } from "../machines/authMachine";
-import MyGoogleMap from '../components/charts/GoogleMap'
-import SessionDays from "../components/charts/SessionChartDay";
-import SessionHours from "../components/charts/SessionHours";
-import ViewsPerPage from "../components/charts/ViewsPerPage";
+import React, { lazy, Suspense } from "react";
+import ErrorBoundary from '../components/Charts/ErrorBoundary';
+import Loading from '../components/Charts/Loading';
+import { makeStyles } from "@material-ui/core/styles";
 
+const MyGoogleMap = lazy(() => import("../components/Charts/MyGoogleMap"));
+const SessionsDays = lazy(() => import("../components/Charts/SessionsDays"));
+const SessionsHours = lazy(() => import("../components/Charts/SessionsHours"));
+const ViewsPerPage = lazy(() => import("../components/Charts/ViewsPerPage"));
+const UsersByOs = lazy(() => import("../components/Charts/UsersByOs"));
+const RetentionCohortWeek = lazy(() => import("../components/Charts/RetentionCohortWeek"));
+const LogOfAllEvents = lazy(() => import("../components/Charts/LogOfAllEvents"));
 
-export interface Props {
-  authService: Interpreter<AuthMachineContext, any, AuthMachineEvents, any>;
-}
+const useStyles = makeStyles(() => ({
+  MyDashBoard: {
+    display: "flex",
+    flexWrap: 'wrap',
+    padding: '0',
+    width: '100%',
+    border: '1px solid black'
+  },
+}));
 
 const DashBoard: React.FC = () => {
+
+  const classes = useStyles();
+
   return (
-    <div style={{display: 'flex', flexFlow:'wrap',border: '1px solid black'}}>
-    <MyGoogleMap/>
-    <SessionDays/>
-    <ViewsPerPage/>
-    <SessionHours/>
+    <div className={classes.MyDashBoard} >
+      <Suspense fallback={<Loading />}>
+        <ErrorBoundary>
+          <MyGoogleMap />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <SessionsDays />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <SessionsHours />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <ViewsPerPage />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <UsersByOs />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <RetentionCohortWeek />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <LogOfAllEvents />
+        </ErrorBoundary>
+      </Suspense>
     </div>
   );
 };
