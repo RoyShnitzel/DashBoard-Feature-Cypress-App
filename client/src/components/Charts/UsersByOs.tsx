@@ -24,9 +24,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 const PieOs: React.FC = () => {
     const classes = useStyles();
     const [chartData, setChartData] = useState<PieOsInter[] | undefined>([])
-    const [index, setIndex] = useState<number>()
+    const [index, setIndex] = useState<number>(0)
 
-    const onPieEnter = (index: number): void => {
+    const onPieEnter = (data: any,index: number): void => {
+        console.log(index)
         setIndex(index)
     };
 

@@ -40,7 +40,6 @@ const StyledTableRow = withStyles((theme: Theme) =>
 
 const useStyles = makeStyles((theme: Theme) => ({
     table: {
-        minWidth: 700,
     },
     container: {
         display: 'flex',

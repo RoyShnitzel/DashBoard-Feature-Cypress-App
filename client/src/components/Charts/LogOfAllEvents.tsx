@@ -127,7 +127,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         textAlign: 'center',
         alignItems: "center",
         overflow: 'auto',
-        width:'100%'
+        width:'100%',
     },
     textField: {
         marginLeft: theme.spacing(1),
@@ -136,7 +136,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     section: {
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
     },
     formControl: {
         display: 'flex',

@@ -32,7 +32,7 @@ const ViewsPerPage: React.FC = () => {
     return (
         <div className={classes.container}>
             <h1>Views Per Page</h1>
-            <ResponsiveContainer width={730} height={250} >
+            <ResponsiveContainer width={300} height={300} >
                 <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
